@@ -132,7 +132,13 @@ void PathFinder::printMap()
 	}
 }
 
-
 PathFinder::~PathFinder()
 {
+	for (auto vec = mapNodes.begin(); vec != mapNodes.end(); vec++)
+	{
+		for (auto node = vec->begin(); node != vec->end(); node++)
+		{
+			delete *node;
+		}
+	}
 }
