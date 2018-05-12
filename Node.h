@@ -1,5 +1,6 @@
 #pragma once
-
+#include <SFML/Graphics.hpp>
+#include <string>
 
 struct Vector2int {
 	int x, y;
@@ -9,18 +10,23 @@ struct Vector2int {
 };
 
 
-class Node
+class Node : public sf::Sprite
 {
 public:
 	int weight;
-	unsigned int g, h;
+	float g, h;
 	Vector2int coords;
 	Node* parent;
+	sf::Texture* texture;
 
 public:
 	Node();
 	Node(Vector2int coords, int weight);
 	unsigned int getTotalScore();
+	void loadTexture(std::string fileName);
+	void setVisited();
+	void setPath();
+	bool isWall();
 	~Node();
 };
 

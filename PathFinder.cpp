@@ -2,36 +2,21 @@
 #include "PathFinder.h"
 
 
-PathFinder::PathFinder(unsigned int width, unsigned int height)
+PathFinder::PathFinder()
 {
-	this->width = width;
-	this->height = height;
-
 	directions = {
 		{ 0, 1 },{ 1, 0 },{ 0, -1 },{ -1, 0 },
 		{ -1, -1 },{ 1, 1 },{ -1, 1 },{ 1, -1 }
 	};
-
-	for (int i = 0; i < height; i++)
-	{
-		std::vector<Node*> row;
-		for (int j = 0; j < width; j++)
-		{
-			Vector2int coords;
-			coords.x = i;
-			coords.y = j;
-			row.push_back(new Node(coords, 1));
-		}
-		mapNodes.push_back(row);
-		row.clear();
-	}
 }
 
-std::vector<Vector2int> PathFinder::findPath(Vector2int startCoords, Vector2int endCoords)
+std::vector<Vector2int> PathFinder::findPath(Map* map, Vector2int startCoords, Vector2int endCoords)
 {
 	Node* currentNode = nullptr;
+	unsigned int width = map->getWidth();
+	unsigned int height = map->getHeight();
 	std::set<Node*> openSet, closedSet;
-	currentNode = findNodeOnMap(startCoords);
+	currentNode = map->findNodeOnMap(startCoords);
 	currentNode->h = heuristic(startCoords, endCoords);
 	openSet.insert(currentNode);
 
@@ -61,16 +46,19 @@ std::vector<Vector2int> PathFinder::findPath(Vector2int startCoords, Vector2int 
 				continue;
 			}
 
-			unsigned int totalCost = currentNode->g + ((i < 4) ? currentNode->weight : currentNode->weight * 1.5f);
+			float totalCost = currentNode->g + ((i < 4) ? (currentNode->weight + 1) : (currentNode->weight + 1) * 1.5f);
 
 			Node* succesor = findNodeInList(openSet, newCoords);
 
-			if (succesor == nullptr) 
+			if (succesor == nullptr)
 			{
-				succesor = findNodeOnMap(newCoords);
+				succesor = map->findNodeOnMap(newCoords);
+				if (succesor->isWall())
+					continue;
 				succesor->parent = currentNode;
 				succesor->g = totalCost;
 				succesor->h = heuristic(succesor->coords, endCoords);
+				succesor->setVisited();
 				openSet.insert(succesor);
 			}
 			else if(succesor->g > totalCost)
@@ -84,6 +72,7 @@ std::vector<Vector2int> PathFinder::findPath(Vector2int startCoords, Vector2int 
 	std::vector<Vector2int> path;
 	while (currentNode != nullptr)
 	{
+		currentNode->setPath();
 		path.push_back(currentNode->coords);
 		currentNode = currentNode->parent;
 	}
@@ -91,23 +80,11 @@ std::vector<Vector2int> PathFinder::findPath(Vector2int startCoords, Vector2int 
 	return path;
 }
 
-unsigned int PathFinder::heuristic(Vector2int source, Vector2int target)
+float PathFinder::heuristic(Vector2int source, Vector2int target)
 {
 	return sqrt(pow(source.x - target.x, 2) + pow(source.y - target.y, 2));
-}
-
-Node* PathFinder::findNodeOnMap(Vector2int coords)
-{
-	for (int i = 0; i < height; i++)
-	{
-		for (int j = 0; j < width; j++)
-		{
-			if (mapNodes[i][j]->coords == coords)
-				return mapNodes[i][j];
-		}
-	}
-
-	return nullptr;
+	//return std::max(abs(source.x - target.x), abs(source.y - target.y));
+	//return abs(source.x - target.x) + abs(source.y - target.y);
 }
 
 Node* PathFinder::findNodeInList(std::set<Node*>& nodeSet, Vector2int coords)
@@ -120,25 +97,6 @@ Node* PathFinder::findNodeInList(std::set<Node*>& nodeSet, Vector2int coords)
 	return nullptr;
 }
 
-void PathFinder::printMap()
-{
-	for (int i = 0; i < height; i++)
-	{
-		for (int j = 0; j < width; j++)
-		{
-			std::cout << mapNodes[i][j]->weight << " ";
-		}
-		std::cout << std::endl;
-	}
-}
-
 PathFinder::~PathFinder()
 {
-	for (auto vec = mapNodes.begin(); vec != mapNodes.end(); vec++)
-	{
-		for (auto node = vec->begin(); node != vec->end(); node++)
-		{
-			delete *node;
-		}
-	}
 }
