@@ -2,8 +2,11 @@
 #include "PathFinder.h"
 
 
-PathFinder::PathFinder()
+PathFinder::PathFinder(bool earthMode)
 {
+	this->earthMode = earthMode;
+	this->pathCost = 0;
+
 	directions = {
 		{ 0, 1 },{ 1, 0 },{ 0, -1 },{ -1, 0 },
 		{ -1, -1 },{ 1, 1 },{ -1, 1 },{ 1, -1 }
@@ -12,12 +15,13 @@ PathFinder::PathFinder()
 
 std::vector<Vector2int> PathFinder::findPath(Map* map, Vector2int startCoords, Vector2int endCoords)
 {
+	this->pathCost = 0;
 	Node* currentNode = nullptr;
 	unsigned int width = map->getWidth();
 	unsigned int height = map->getHeight();
 	std::set<Node*> openSet, closedSet;
 	currentNode = map->findNodeOnMap(startCoords);
-	currentNode->h = heuristic(startCoords, endCoords);
+	currentNode->h = heuristic(startCoords, endCoords, width, height);
 	openSet.insert(currentNode);
 
 	while (!openSet.empty())
@@ -33,7 +37,6 @@ std::vector<Vector2int> PathFinder::findPath(Map* map, Vector2int startCoords, V
 		if (currentNode->coords == endCoords)
 			break;
 
-
 		closedSet.insert(currentNode);
 		openSet.erase(std::find(openSet.begin(), openSet.end(), currentNode));
 
@@ -41,13 +44,27 @@ std::vector<Vector2int> PathFinder::findPath(Map* map, Vector2int startCoords, V
 		{
 			Vector2int newCoords = currentNode->coords + directions[i];
 
-			if (newCoords.x < 0 || newCoords.x >= height || newCoords.y < 0 || newCoords.y >= width || findNodeInList(closedSet, newCoords))
+			if (this->earthMode)
 			{
-				continue;
+				if (newCoords.x < 0)			newCoords.x = width - 1;
+				else if (newCoords.x >= width)	newCoords.x = 0;
+				if (newCoords.y < 0)			newCoords.y = height - 1;
+				else if (newCoords.y >= height)	newCoords.y = 0;
+
+				if (findNodeInList(closedSet, newCoords))
+				{
+					continue;
+				}
+			}
+			else
+			{
+				if (newCoords.x < 0 || newCoords.x >= height || newCoords.y < 0 || newCoords.y >= width || findNodeInList(closedSet, newCoords))
+				{
+					continue;
+				}
 			}
 
 			float totalCost = currentNode->g + ((i < 4) ? (currentNode->weight + 1) : (currentNode->weight + 1) * 1.5f);
-
 			Node* succesor = findNodeInList(openSet, newCoords);
 
 			if (succesor == nullptr)
@@ -57,8 +74,8 @@ std::vector<Vector2int> PathFinder::findPath(Map* map, Vector2int startCoords, V
 					continue;
 				succesor->parent = currentNode;
 				succesor->g = totalCost;
-				succesor->h = heuristic(succesor->coords, endCoords);
-				succesor->setVisited();
+				succesor->h = heuristic(succesor->coords, endCoords, width, height);
+				succesor->setAsVisited();
 				openSet.insert(succesor);
 			}
 			else if(succesor->g > totalCost)
@@ -69,10 +86,11 @@ std::vector<Vector2int> PathFinder::findPath(Map* map, Vector2int startCoords, V
 		}
 	}
 
+	this->pathCost += currentNode->g;
 	std::vector<Vector2int> path;
 	while (currentNode != nullptr)
 	{
-		currentNode->setPath();
+		currentNode->setAsPath();
 		path.push_back(currentNode->coords);
 		currentNode = currentNode->parent;
 	}
@@ -80,11 +98,17 @@ std::vector<Vector2int> PathFinder::findPath(Map* map, Vector2int startCoords, V
 	return path;
 }
 
-float PathFinder::heuristic(Vector2int source, Vector2int target)
+
+float PathFinder::heuristic(Vector2int source, Vector2int target, int width, int height)
 {
+	if (this->earthMode)
+	{
+		float distanceX = std::min(abs(source.x - target.x), width - abs(source.x - target.x));
+		float distanceY = std::min(abs(source.y - target.y), height - abs(source.y - target.y));
+		return sqrt(pow(distanceX, 2) + pow(distanceY, 2));
+	}
+
 	return sqrt(pow(source.x - target.x, 2) + pow(source.y - target.y, 2));
-	//return std::max(abs(source.x - target.x), abs(source.y - target.y));
-	//return abs(source.x - target.x) + abs(source.y - target.y);
 }
 
 Node* PathFinder::findNodeInList(std::set<Node*>& nodeSet, Vector2int coords)
@@ -95,6 +119,11 @@ Node* PathFinder::findNodeInList(std::set<Node*>& nodeSet, Vector2int coords)
 			return node;
 	}
 	return nullptr;
+}
+
+float PathFinder::getPathCost()
+{
+	return this->pathCost;
 }
 
 PathFinder::~PathFinder()

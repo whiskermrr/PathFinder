@@ -24,8 +24,8 @@ public:
 	Node(Vector2int coords, int weight);
 	unsigned int getTotalScore();
 	void loadTexture(std::string fileName);
-	void setVisited();
-	void setPath();
+	void setAsVisited();
+	void setAsPath();
 	bool isWall();
 	~Node();
 };

@@ -63,12 +63,12 @@ bool Node::isWall()
 	return (this->weight == 1);
 }
 
-void Node::setVisited()
+void Node::setAsVisited()
 {
 	loadTexture("visited.png");
 }
 
-void Node::setPath()
+void Node::setAsPath()
 {
 	loadTexture("path.png");
 }
