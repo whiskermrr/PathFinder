@@ -156,6 +156,7 @@
     <ClInclude Include="Map.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="PathFinder.h" />
+    <ClInclude Include="PathManager.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
@@ -163,6 +164,7 @@
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="PathFinder.cpp" />
+    <ClCompile Include="PathManager.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

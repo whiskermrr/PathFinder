@@ -13,10 +13,13 @@ public:
 	unsigned int getHeight();
 	Node* findNodeOnMap(Vector2int coords);
 	void render(sf::RenderWindow* window);
+	Vector2int setStart(float x, float y);
+	Vector2int setEnd(float x, float y);
 	~Map();
 
 private:
 	std::vector<Node*> nodesMap;
 	unsigned int width, height;
+	bool isStartSet;
 };
 

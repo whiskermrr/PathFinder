@@ -7,6 +7,7 @@ Map::Map(std::string fileName)
 
 	this->width = 0;
 	this->height = 0;
+	this->isStartSet = false;
 
 	if (file.is_open())
 	{
@@ -73,6 +74,52 @@ unsigned int Map::getHeight()
 std::vector<Node*>& Map::getNodesMap()
 {
 	return this->nodesMap;
+}
+
+Vector2int Map::setStart(float x, float y)
+{
+	Vector2int start;
+	start.x = 0;
+	start.y = 0;
+
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			Node* node = this->nodesMap.at(i * width + j);
+			if (node->getGlobalBounds().contains(x, y)
+				&& !node->isWall())
+			{
+				start.x = node->coords.x;
+				start.y = node->coords.y;
+			}
+		}
+	}
+
+	return start;
+}
+
+Vector2int Map::setEnd(float x, float y)
+{
+	Vector2int end;
+	end.x = 0;
+	end.y = 0;
+
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			Node* node = this->nodesMap.at(i * width + j);
+			if (node->getGlobalBounds().contains(x, y)
+				&& !node->isWall())
+			{
+				end.x = node->coords.x;
+				end.y = node->coords.y;
+			}
+		}
+	}
+
+	return end;
 }
 
 Map::~Map()

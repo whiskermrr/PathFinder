@@ -44,7 +44,7 @@ Node::Node(Vector2int coords, int weight)
 	}
 
 	loadTexture(fileName);
-	this->setPosition(this->coords.x * 16, this->coords.y * 16);
+	this->setPosition(coords.x * 16, coords.y * 16);
 }
 
 void Node::loadTexture(std::string fileName)
