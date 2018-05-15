@@ -10,7 +10,10 @@ PathManager::PathManager(std::string fileName)
 std::vector<Vector2int> PathManager::findPath(bool earthMode)
 {
 	PathFinder pathFinder(earthMode);
-	std::vector<Vector2int> path = pathFinder.findPath(this->map, this->map->getStartNode()->coords, this->map->getEndNode()->coords);
+	std::vector<Vector2int> path = pathFinder.findPath(this->map, 
+													this->map->getStartNode()->coords, 
+													this->map->getEndNode()->coords
+													);
 	pathCost = pathFinder.getPathCost();
 
 	return path;

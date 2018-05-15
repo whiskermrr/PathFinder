@@ -91,6 +91,8 @@ void Map::setStart(float x, float y)
 			{
 				if (this->startNode != nullptr)
 					startNode->loadTexture("floor.png");
+				if (this->startNode == node)
+					return;
 				this->startNode = node;
 				this->startNode->loadTexture("start.png");
 			}
@@ -110,6 +112,8 @@ void Map::setEnd(float x, float y)
 			{
 				if (this->endNode != nullptr)
 					endNode->loadTexture("floor.png");
+				if (this->endNode == node)
+					return;
 				this->endNode = node;
 				this->endNode->loadTexture("end.png");
 			}
