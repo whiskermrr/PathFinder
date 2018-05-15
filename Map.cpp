@@ -7,7 +7,8 @@ Map::Map(std::string fileName)
 
 	this->width = 0;
 	this->height = 0;
-	this->isStartSet = false;
+	this->startNode = nullptr;
+	this->endNode = nullptr;
 
 	if (file.is_open())
 	{
@@ -24,6 +25,8 @@ Map::Map(std::string fileName)
 				coords.y = height;
 				Node* node = new Node(coords, x - '0');
 				nodesMap.push_back(node);
+
+
 				width++;
 			}
 			if (file.peek() == '\n')
@@ -76,12 +79,8 @@ std::vector<Node*>& Map::getNodesMap()
 	return this->nodesMap;
 }
 
-Vector2int Map::setStart(float x, float y)
+void Map::setStart(float x, float y)
 {
-	Vector2int start;
-	start.x = 0;
-	start.y = 0;
-
 	for (int i = 0; i < height; i++)
 	{
 		for (int j = 0; j < width; j++)
@@ -90,21 +89,17 @@ Vector2int Map::setStart(float x, float y)
 			if (node->getGlobalBounds().contains(x, y)
 				&& !node->isWall())
 			{
-				start.x = node->coords.x;
-				start.y = node->coords.y;
+				if (this->startNode != nullptr)
+					startNode->loadTexture("floor.png");
+				this->startNode = node;
+				this->startNode->loadTexture("start.png");
 			}
 		}
 	}
-
-	return start;
 }
 
-Vector2int Map::setEnd(float x, float y)
+void Map::setEnd(float x, float y)
 {
-	Vector2int end;
-	end.x = 0;
-	end.y = 0;
-
 	for (int i = 0; i < height; i++)
 	{
 		for (int j = 0; j < width; j++)
@@ -113,13 +108,23 @@ Vector2int Map::setEnd(float x, float y)
 			if (node->getGlobalBounds().contains(x, y)
 				&& !node->isWall())
 			{
-				end.x = node->coords.x;
-				end.y = node->coords.y;
+				if (this->endNode != nullptr)
+					endNode->loadTexture("floor.png");
+				this->endNode = node;
+				this->endNode->loadTexture("end.png");
 			}
 		}
 	}
+}
 
-	return end;
+Node* Map::getStartNode()
+{
+	return this->startNode;
+}
+
+Node* Map::getEndNode()
+{
+	return this->endNode;
 }
 
 Map::~Map()

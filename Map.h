@@ -12,14 +12,17 @@ public:
 	unsigned int getWidth();
 	unsigned int getHeight();
 	Node* findNodeOnMap(Vector2int coords);
+	Node* getStartNode();
+	Node* getEndNode();
 	void render(sf::RenderWindow* window);
-	Vector2int setStart(float x, float y);
-	Vector2int setEnd(float x, float y);
+	void setStart(float x, float y);
+	void setEnd(float x, float y);
 	~Map();
 
 private:
 	std::vector<Node*> nodesMap;
 	unsigned int width, height;
-	bool isStartSet;
+	Node* startNode;
+	Node* endNode;
 };
 

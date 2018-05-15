@@ -14,8 +14,6 @@ public:
 
 private:
 	Map * map;
-	Vector2int start;
-	Vector2int end;
 	float pathCost;
 };
 

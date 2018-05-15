@@ -5,16 +5,12 @@
 PathManager::PathManager(std::string fileName)
 {
 	this->map = new Map(fileName);
-	start.x = 7;
-	start.y = 22;
-	end.x = 24;
-	end.y = 12;
 }
 
 std::vector<Vector2int> PathManager::findPath(bool earthMode)
 {
 	PathFinder pathFinder(earthMode);
-	std::vector<Vector2int> path = pathFinder.findPath(this->map, this->start, this->end);
+	std::vector<Vector2int> path = pathFinder.findPath(this->map, this->map->getStartNode()->coords, this->map->getEndNode()->coords);
 	pathCost = pathFinder.getPathCost();
 
 	return path;
@@ -22,12 +18,12 @@ std::vector<Vector2int> PathManager::findPath(bool earthMode)
 
 void PathManager::setStart(float x, float y)
 {
-	this->start = map->setStart(x, y);
+	this->map->setStart(x, y);
 }
 
 void PathManager::setEnd(float x, float y)
 {
-	this->end = map->setEnd(x, y);
+	this->map->setEnd(x, y);
 }
 
 void PathManager::render(sf::RenderWindow* window)

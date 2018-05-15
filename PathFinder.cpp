@@ -35,7 +35,10 @@ std::vector<Vector2int> PathFinder::findPath(Map* map, Vector2int startCoords, V
 		}
 
 		if (currentNode->coords == endCoords)
+		{
+			pathCost = currentNode->g;
 			break;
+		}
 
 		closedSet.insert(currentNode);
 		openSet.erase(std::find(openSet.begin(), openSet.end(), currentNode));
@@ -86,15 +89,18 @@ std::vector<Vector2int> PathFinder::findPath(Map* map, Vector2int startCoords, V
 		}
 	}
 
-	this->pathCost += currentNode->g;
 	std::vector<Vector2int> path;
-	while (currentNode != nullptr)
-	{
-		currentNode->setAsPath();
-		path.push_back(currentNode->coords);
-		currentNode = currentNode->parent;
-	}
 
+	if (pathCost > 0)
+	{
+		while (currentNode != nullptr)
+		{
+			currentNode->setAsPath();
+			path.push_back(currentNode->coords);
+			currentNode = currentNode->parent;
+		}
+	}
+	
 	return path;
 }
 
