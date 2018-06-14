@@ -10,6 +10,7 @@ public:
 	void render(sf::RenderWindow* window);
 	void setStart(float x, float y);
 	void setEnd(float x, float y);
+	void resetMap(std::string fileName);
 	~PathManager();
 
 private:

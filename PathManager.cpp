@@ -10,13 +10,20 @@ PathManager::PathManager(std::string fileName)
 std::vector<Vector2int> PathManager::findPath(bool earthMode)
 {
 	PathFinder pathFinder(earthMode);
-	std::vector<Vector2int> path = pathFinder.findPath(this->map, 
-													this->map->getStartNode()->coords, 
-													this->map->getEndNode()->coords
-													);
+	std::vector<Vector2int> path = pathFinder.findPath(
+		this->map,
+		this->map->getStartNode()->coords, 
+		this->map->getEndNode()->coords
+		);
 	pathCost = pathFinder.getPathCost();
 
 	return path;
+}
+
+void PathManager::resetMap(std::string fileName)
+{
+	delete this->map;
+	this->map = new Map(fileName);
 }
 
 void PathManager::setStart(float x, float y)

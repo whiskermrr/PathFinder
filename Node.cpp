@@ -75,4 +75,7 @@ void Node::setAsPath()
 
 Node::~Node()
 {
+	this->parent = nullptr;
+	delete this->texture;
+	this->texture = nullptr;
 }

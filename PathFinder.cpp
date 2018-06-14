@@ -15,7 +15,6 @@ PathFinder::PathFinder(bool earthMode)
 
 std::vector<Vector2int> PathFinder::findPath(Map* map, Vector2int startCoords, Vector2int endCoords)
 {
-	this->pathCost = 0;
 	Node* currentNode = nullptr;
 	unsigned int width = map->getWidth();
 	unsigned int height = map->getHeight();

@@ -133,4 +133,10 @@ Node* Map::getEndNode()
 
 Map::~Map()
 {
+	for (std::vector<Node*>::iterator it = nodesMap.begin(); it != nodesMap.end(); ++it)
+	{
+		delete (*it);
+	}
+
+	nodesMap.clear();
 }
